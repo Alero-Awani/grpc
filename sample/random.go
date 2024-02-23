@@ -2,9 +2,15 @@ package sample
 
 import (
 	"math/rand"
+	"time"
 
 	pb "github.com/aleroawani/grpc/pb/proto"
+	"github.com/google/uuid"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 
 func randomKeyboardLayout() pb.Keyboard_Layout {
@@ -21,6 +27,22 @@ func randomKeyboardLayout() pb.Keyboard_Layout {
 
 func randomBool() bool {
 	return rand.Intn(2) == 1
+}
+
+func randomLaptopBrand() string {
+	return randomStringFromSet("Apple", "Dell", "Lenovo")
+}
+
+func randomLaptopName(brand string) string {
+	switch brand {
+	case "Apple":
+		return randomStringFromSet("Macbook Air", "Macbook Pro")
+	case "Dell":
+		return randomStringFromSet("Latitude", "Vostro", "XPS", "Alienware")
+	default:
+		return randomStringFromSet("Thinkpad x1", "Thinkpad P1", "Thinkpad P53")
+	}
+		
 }
 
 func randomCPUBrand() string {
@@ -43,6 +65,45 @@ func randomCPUName(brand string) string {
 	)
 }
 
+func randomGPUBrand() string {
+	return randomStringFromSet("NVIDIA", "AMD")
+}
+
+func randomGPUName(brand string) string {
+	if brand == "NVIDIA" {
+		return randomStringFromSet(
+			"RTX 2060",
+			"RTX 2070",
+			"GTX 1660-TI",
+			"GTX 1070",
+		)
+	}
+	return randomStringFromSet(
+		"RTX 590",
+		"RX 580",
+		"RX 5700-XT",
+		"RX Vega-56",
+	)
+}
+
+func randomScreenPanel() pb.Screen_Panel {
+	if rand.Intn(2) == 1 {
+		return pb.Screen_IPS
+	}
+	return pb.Screen_OLED
+}
+
+func randomScreenResolution() *pb.Screen_Resolution{
+	height := randomInt(1080, 4320)
+	width := height * 16 / 9
+
+	resolution := &pb.Screen_Resolution{
+		Height: uint32(height),
+		Width: uint32(width),
+	}
+	return resolution
+
+}
 func randomStringFromSet(a ...string) string {
 	n := len(a)
 	if n == 0 {
@@ -55,6 +116,14 @@ func randomInt(min int, max int) int {
 	return min + rand.Intn(max-min+1)
 }
 
-func randomFLoat64(min float64, max float64) float64 {
+func randomFloat64(min float64, max float64) float64 {
 	return min + rand.Float64()*(max-min)
+}
+
+func randomFloat32(min float32, max float32) float32 {
+	return min + rand.Float32()*(max-min)
+}
+
+func randomID() string {
+	return uuid.New().String()
 }

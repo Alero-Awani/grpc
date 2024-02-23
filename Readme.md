@@ -79,6 +79,39 @@ export PATH=$PATH:/$GO_PATH/bin
 - Compare the size of the binary file and JSON file to see which one is smaller.
 
 
-Step 1 - Create a sample package to generate rnadom data.
+**Step 1** - Create a sample package to generate random data.
 
 `randomBool` - function to generate random boolean for the backlit field 
+
+The `serializer` package has functions to serialize the laptop objects to files.
+
+**Step 2**
+`WriteProtobufToBinaryFile()` - Used to write a protobuf message to a file in binary format. In our case, the message is the laptop object. 
+
+We can use the proto.Message interface to make it more general.
+
+`proto.Marshal` - serialise the message to binary. 
+The binary is written in `laptop.bin` in the temp folder after the test runs.
+
+**Step 3** 
+After step 2, we write a function that converts that binary to a protobuf object and test it.
+`ReadProtobufFromBinaryFile` Thus function reads back that binary file into a protobuf message object.
+
+In the test
+`laptop2 := &pb.Laptop{}` - We create a new laptop 2 object.
+
+then we call the ReadPro... function to read the binary file data into that object.
+
+`require.True(t.Proto.Equal(laptop1, laptop2))`
+here we use `proto.Equal` method to check that laptop2 contains the same data as laptop1.
+
+**Step 4** 
+Now in order to actually see what was converted, we have to convert the protobuf message from step 3 to JSON
+
+To check for test coverage, in the test file, click on `Run Package tests` then you can go back to the main file e.g `file.go` to the see which part of the code is covered.
+
+### Comparing the JSON to binary file
+
+On the terminal inside the tmp folder run `ls -l`
+You will see the size of the json file is a lot bigger than that of the binary file. Hence we will save a lot of bandwith when using grpc instead of noraml JSON API.
+
