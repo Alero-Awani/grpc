@@ -1,0 +1,62 @@
+{
+  "id": "8198a6e8-9898-4b5a-b573-ce64b72404f4",
+  "brand": "Dell",
+  "name": "Vostro",
+  "cpu": {
+    "brand": "AMD",
+    "name": "Ryzen 5 PRO 3500U",
+    "number_cores": 5,
+    "number_threads": 5,
+    "min_ghz": 3.3029506370054005,
+    "max_ghz": 3.6494377977049077
+  },
+  "ram": {
+    "value": "59",
+    "unit": "GIGABYTE"
+  },
+  "gpus": [
+    {
+      "brand": "AMD",
+      "name": "RX 580",
+      "min_ghz": 1.239578909993917,
+      "max_ghz": 1.97840036889093,
+      "memory": {
+        "value": "5",
+        "unit": "GIGABYTE"
+      }
+    }
+  ],
+  "storages": [
+    {
+      "driver": "SSD",
+      "memory": {
+        "value": "346",
+        "unit": "GIGABYTE"
+      }
+    },
+    {
+      "driver": "HDD",
+      "memory": {
+        "value": "2",
+        "unit": "TERABYTE"
+      }
+    }
+  ],
+  "screen": {
+    "size_inch": 16.356028,
+    "resolution": {
+      "width": 2140,
+      "height": 1204
+    },
+    "panel": "IPS",
+    "multitouch": true
+  },
+  "keyboard": {
+    "layout": "AZERTY",
+    "backlit": true
+  },
+  "weight_kg": 1.3549028792864664,
+  "price_usd": 2589.9023079970793,
+  "release_year": 2016,
+  "updated_at": "2024-02-23T11:47:39.567924Z"
+}

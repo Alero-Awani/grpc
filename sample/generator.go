@@ -11,7 +11,6 @@ func NewKeyboard() *pb.Keyboard {
 		Layout: randomKeyboardLayout(),
 		Backlit: randomBool(),
 
-
 	}
 	return keyboard
 
@@ -35,7 +34,7 @@ func NewCPU() *pb.CPU {
 	cpu := &pb.CPU{
 		Brand: brand,
 		Name: name,
-		NumberCores: uint32(numberCores),
+		NumberCores: int32(numberCores),
 		NumberThreads: uint32(numberThreads),
 		MinGhz: minGhz,
 		MaxGhz: maxGhz,

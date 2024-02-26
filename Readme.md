@@ -2,6 +2,17 @@
 
 Target: Build a pc-book app to manage and search for laptop configurations.
 
+## Benefits of Protobuf 
+
+- Space Efficient encoding - This is because of the way the messages are encoded. When we encode something with JSON or XML, anytime we send a message, we send a field name with that message. Protobuf sends a `numeric ID` instead to represent the field name and this saves a lot of space.
+
+- Protobuf message description can be used to generate code for many languages using protoc. 
+
+
+e.g a message can be encoded in Java using a proto file, and consumed in a C++ application. The applications can exchange messages because they are using protobuf as their method of encoding and decoding
+
+
+
 ## What is grpc 
 
 `Remote Procedure Calls` - This a protocol that allows a program to execute a procedure of another program located in another computer without the developer explicitly coding the details for the remote interaction as it is automatically handled by the underlying framework.
@@ -15,7 +26,6 @@ In order to communicate with each other, they must all agree on a set of `API co
 - Payload format: JSON, XML, binary
 - Data model 
 - Error handling
-
 
 
 
@@ -37,20 +47,22 @@ If you want to have the code auto generated, you run the proto file against a co
 
 The output(generated code) is an interface that creates the code for you that implements the object types that you outlined in your proto file.
 
+The auto-generated code is usually stored in the `pb` package. The code her provides Go representations of your `messages`,along with the `methods for serialialization, deserialisation and other utilites`
+
 ## Installation Steps 
 
 ### Define the message 
 
 To send messages, we have to define the message first. The protocol buffer file `processor_message.go` defines the messages and the services.
 
-In this file, we define the `Request`, `Response` and the `Service`
+In this file, we usually define the `Request`, `Response` and the `Service`
 
-In order to generate the server's code and the messages' encoding we use the `protoc-gen-go` which is the code generator.
+In order to generate the server's code and the messages' encoding we use the `protoc-gen-go` which is the compiler plugin for go.
 
 ```sh
 protoc --go_out=pb --go-grpc_out=pb --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative proto/*.proto 
 ```
-
+Let's explain the command above
 
 `pb` is the path of the directory where you want to put your generated code.
 
@@ -72,6 +84,7 @@ export PATH=$PATH:/$GO_PATH/bin
 
 
 ### STEPS 
+
 
 - Write protobuf message to binary file 
 - Read protobuf message from binary file
@@ -115,3 +128,67 @@ To check for test coverage, in the test file, click on `Run Package tests` then 
 On the terminal inside the tmp folder run `ls -l`
 You will see the size of the json file is a lot bigger than that of the binary file. Hence we will save a lot of bandwith when using grpc instead of noraml JSON API.
 
+### EXTRA NOTES ON PROTOCOL BUFFERS 
+
+```proto
+message Keyboard {
+    enum Layout {
+        UNKNOWN = 0;
+        QWERTY = 1;
+        QWERTZ = 2;
+        AZERTY = 3;
+    }
+
+    Layout layout = 1;
+    bool backlit = 2;
+}
+```
+
+`Numberic Id` - This is the serializtion sequence, every property has to be labeled uniquely. This is how protocol buffer maintains the compatability and it sends this number to represent the field name.
+
+
+This protobuf message can be used to serialize and deserialize instances of the Keyboard data structure in a binary format, making it easy to exchange structured data between systems or store it in a more compact form. The numeric IDs are used for efficient encoding and decoding of the data.
+
+**Enums** - enum is one of the composite datatypes of Protobuf.The keyboard message class contains an enum for layout.Each of them also has a position(0, 1, 2, 3, 4) which is what Protobuf uses while serialization and deserialization.
+
+The `Layout` enum is used as a datatype with the `layout` attribute
+
+
+```go 
+func NewKeyboard() *pb.Keyboard {
+	keyboard := &pb.Keyboard{
+		Layout: randomKeyboardLayout(),
+		Backlit: randomBool(),
+
+	}
+	return keyboard
+}
+```
+This function is designed to create a new `pb.keyboard` instance. It returns a pointer to a new instance od the pb.Keyboard type.
+
+Note that the `pb.Keyboard` type corresponds to the Protocol Buffers message `message Keyboard...`
+
+
+Hover over `*pb.keyboard` and you will see the code description below 
+
+```go
+type Keyboard struct {
+    state         protoimpl.MessageState
+    sizeCache     protoimpl.SizeCache
+    unknownFields protoimpl.UnknownFields
+
+    Layout  Keyboard_Layout `protobuf:"varint,1,opt,name=layout,proto3,enum=Keyboard_Layout" json:"layout,omitempty"`
+    Backlit bool            `protobuf:"varint,2,opt,name=backlit,proto3" json:"backlit,omitempty"`
+}
+
+func (*pb.Keyboard).Descriptor() ([]byte, []int)
+func (*pb.Keyboard).GetBacklit() bool
+func (*pb.Keyboard).GetLayout() pb.Keyboard_Layout
+func (*pb.Keyboard).ProtoMessage()
+func (*pb.Keyboard).ProtoReflect() protoreflect.Message
+func (*pb.Keyboard).Reset()
+func (*pb.Keyboard).String() string
+grpc.Keyboard on pkg.go.dev
+```
+
+This is the **Go code** generated for the protocol buffer message (keyboard message). The code includes the definition of the `keyboard` struct along with some methods and descriptors that are automatically generates by the protobuf compiler.
