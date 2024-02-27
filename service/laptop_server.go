@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	pb "github.com/aleroawani/grpc/pb/proto"
@@ -43,5 +44,13 @@ func (server *LaptopServer) CreateLaptop(
 	}
 
 	// save the laptop to store
+	err := server.Store.Save(laptop)
+	code := codes.Internal
+	if errors.Is(err, ErrAlreadyExists) {
+		code = codes.AlreadyExists
+	}
+	if err != nil {
+		return nil, status.Errorf(code, "cannot save laptop to the store: %v", err)
+	}
 
 }

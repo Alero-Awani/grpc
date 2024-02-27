@@ -134,3 +134,10 @@ func NewLaptopServer() *LaptopServer {
 - summary- we want to  create a new laptop ,and to do that we need to get the details for creating from the request, which is why we have req.GetLaptop(). Then we do somechecks on the given id or generate a new one. Then we are supposed to save to a db. But instead we will use an in memory store.
 
 - `data map[string]*pb.Laptop` we use a map to store the data, where the key is the laptop id and the value is the laptop object.
+
+```go
+res := &pb.CreateLaptopResponse{
+		Id: laptop.Id,
+	}
+```
+Create a new response object with the laptop ID and return it to teh caller/client.
