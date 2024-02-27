@@ -1,5 +1,11 @@
 package service
 
+import (
+	"sync"
+
+	pb "github.com/aleroawani/grpc/pb/proto"
+)
+
 // LaptopStore is an interface to store laptop
 type LaptopStore interface {
 	// Save saves the laptop to the store
@@ -9,5 +15,6 @@ type LaptopStore interface {
 
 // InMemoryLaptopStore stores laptop in memory
 type InMemoryLaptopStore struct {
+	mutex sync.RWMutex
 	data map[string]*pb.Laptop
 }
