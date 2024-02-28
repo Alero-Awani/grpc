@@ -140,4 +140,58 @@ res := &pb.CreateLaptopResponse{
 		Id: laptop.Id,
 	}
 ```
-Create a new response object with the laptop ID and return it to teh caller/client.
+Create a new response object with the laptop ID and return it to the caller/client.
+
+### Client Side 
+Note -  the client code in `cmd/client/main.go` the CreateLaptop function is called on the gRPC client (laptopClient). However, the server-side implementation of `CreateLaptop` is invoked as part of the gRPC communication process.
+
+```go
+	conn, err := grpc.Dial(*serverAddress, grpc.WithInsecure())
+```
+- The client establishes a connection to the gRPC server using grpc.Dial with the specified server address.
+
+```go
+req := &pb.CreateLaptopRequest{
+		Laptop: laptop,
+	}
+
+res, err := laptopClient.CreateLaptop(context.Background(), req)
+```
+
+- The client invokes the CreateLaptop RPC method on the server by calling laptopClient.CreateLaptop(context.Background(), req). This sends a request to the server with the created laptop as the payload.
+
+- On the server side, the gRPC server processes the incoming request. Specifically, it `invokes the server-side implementation of the CreateLaptop method` that you defined in your LaptopServer implementation.
+
+- The server-side implementation of CreateLaptop processes the request, creates a response (in this case, a CreateLaptopResponse containing an id), and sends the response back to the client.
+
+```go
+laptop := req.GetLaptop()
+log.Printf("Received a create-laptop request with id: %s", laptop)
+```
+
+In the Createlaptop implementation of the server, this above is where the server receives the request from the client, This method `req.GetLaptop()` retrieves the value of the Laptop field from the request message.
+
+#### The list above is further summarised below 
+
+- Client Invocation:
+    * When a gRPC client calls the CreateLaptop method, it creates an RPC request with the specified method name (CreateLaptop) and sends it to the server.
+
+- Server-Side Invocation:
+    * On the server side, the gRPC server intercepts the incoming request and dispatches it to the corresponding method in your LaptopServer implementation, in this case, CreateLaptop.
+
+- Execution of Server-Side Logic:
+    *  The server executes the logic you've implemented in the CreateLaptop method, which typically involves processing the request, performing business logic, and generating a response.
+
+- Response to Client:
+    *  The server sends the response back to the client, and the client's invocation of the CreateLaptop method returns with the result.
+
+In summary, the gRPC framework facilitates the communication between a client and a server by invoking the appropriate method on the server based on the RPC call made by the client. This follows the standard Remote Procedure Call paradigm where a client invokes a method on a remote server, and the server executes the corresponding logic and returns a result.
+
+
+### Communication
+- The client creates a new Laptop object using sample.NewLaptop() and wraps it in a CreateLaptopRequest message.
+- The client invokes the CreateLaptop RPC method on the gRPC server, sending the CreateLaptopRequest as the payload.
+- On the server side, the CreateLaptop method is called, and it receives the CreateLaptopRequest containing the Laptop object.
+- The server processes the request, which may involve validating the data, generating an ID if needed, and saving the laptop to some storage (e.g., a database or in-memory store) using the server.Store.Save(laptop) call.
+- The server then generates a response (a CreateLaptopResponse containing the ID of the created laptop) and sends it back to the client.
+

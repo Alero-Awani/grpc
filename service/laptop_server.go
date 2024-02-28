@@ -14,11 +14,11 @@ import (
 // LaptopServer is the server that provides laptop services
 type LaptopServer struct {
 	Store LaptopStore
-
 }
 
-func NewLaptopServer() *LaptopServer {
-	return &LaptopServer{}
+// NewlaptopServer returns a new LaptopServer
+func NewLaptopServer(store LaptopStore) *LaptopServer {
+	return &LaptopServer{store}
 }
 
 // CreateLaptop is a unary RPC to create a new laptop
@@ -52,5 +52,10 @@ func (server *LaptopServer) CreateLaptop(
 	if err != nil {
 		return nil, status.Errorf(code, "cannot save laptop to the store: %v", err)
 	}
+	log.Printf("saved laptop with id: %s", laptop.Id)
 
+	res := &pb.CreateLaptopResponse{
+		Id: laptop.Id,
+	}
+	return res, nil 
 }

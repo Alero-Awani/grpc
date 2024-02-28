@@ -47,7 +47,7 @@ func (c *laptopServiceClient) CreateLaptop(ctx context.Context, in *CreateLaptop
 // for forward compatibility
 type LaptopServiceServer interface {
 	CreateLaptop(context.Context, *CreateLaptopRequest) (*CreateLaptopResponse, error)
-	mustEmbedUnimplementedLaptopServiceServer()
+	// mustEmbedUnimplementedLaptopServiceServer()
 }
 
 // UnimplementedLaptopServiceServer must be embedded to have forward compatible implementations.

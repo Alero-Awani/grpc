@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"testing"
 
 	pb "github.com/aleroawani/grpc/pb/proto"
@@ -8,9 +9,10 @@ import (
 	"github.com/aleroawani/grpc/service"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func testServerCreateLaptop(t *testing.T) {
+func TestServerCreateLaptop(t *testing.T) {
 	t.Parallel()
 
 	laptopNoID	:= sample.NewLaptop()
@@ -39,7 +41,7 @@ func testServerCreateLaptop(t *testing.T) {
 			code:		codes.OK,
 		},
 		{
-			name:		"success-no_id",
+			name:		"success_no_id",
 			laptop:		laptopNoID,
 			store: 		service.NewInMemoryLaptopStore(),
 			code:		codes.OK,
@@ -58,6 +60,37 @@ func testServerCreateLaptop(t *testing.T) {
 			store:		storeDuplicateID,
 			code:		codes.AlreadyExists,
 		},
+	}
+	for i := range testCases {
+		tc := testCases[i]
+
+		t.Run(tc.name, func(t *testing.T){
+			t.Parallel()
+
+			//create new laptop request
+			req := &pb.CreateLaptopRequest{
+				Laptop: tc.laptop,
+			}
+
+			// Create laptop server
+			server := service.NewLaptopServer(tc.store)
+			res, err := server.CreateLaptop(context.Background(), req)
+			if tc.code == codes.OK {
+				require.NoError(t, err)
+				require.NotNil(t, res)
+				require.NotEmpty(t, res.Id)
+				if len(tc.laptop.Id) > 0 {
+					require.Equal(t, tc.laptop.Id, res.Id)
+				} else {
+					require.Error(t, err)
+					require.Nil(t,res)
+					st, ok := status.FromError(err)
+					require.True(t, ok)
+					require.Equal(t, tc.code, st.Code())
+				}
+			}
+
+		})
 	}
 }
 
